@@ -2,16 +2,90 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>俺の最強ドメインへの道</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TERMINAL - ATER Server</title>
     <style>
-        body { font-family: sans-serif; text-align: center; background-color: #f0f8ff; padding-top: 50px; }
-        h1 { color: #333; }
-        .message { font-size: 1.2rem; color: #666; }
+        /* ハッカー風デザイン設定 */
+        body {
+            background-color: #000; /* 真っ黒 */
+            color: #00ff41; /* マトリックス風の緑 */
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .terminal {
+            width: 90%;
+            max-width: 600px;
+            background: rgba(0, 20, 0, 0.9);
+            padding: 20px;
+            border: 1px solid #00ff41;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
+            position: relative;
+        }
+
+        /* タイピング風アニメーション */
+        .typing {
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: .15em solid #00ff41;
+            animation: typing 3.5s steps(40, end), blink-caret .75s step-end infinite;
+        }
+
+        @keyframes typing { from { width: 0 } to { width: 100% } }
+        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: #00ff41 } }
+
+        h1 { font-size: 1.8rem; margin-bottom: 20px; }
+        p { line-height: 1.5; margin-bottom: 20px; }
+
+        /* Discordボタン */
+        .discord-btn {
+            display: inline-block;
+            background-color: transparent;
+            color: #00ff41;
+            border: 1px solid #00ff41;
+            padding: 10px 20px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .discord-btn:hover {
+            background-color: #00ff41;
+            color: #000;
+            box-shadow: 0 0 15px #00ff41;
+        }
+
+        .scanline {
+            width: 100%;
+            height: 2px;
+            background: rgba(0, 255, 65, 0.1);
+            position: absolute;
+            top: 0;
+            left: 0;
+            animation: scanline 4s linear infinite;
+        }
+
+        @keyframes scanline { 0% { top: 0; } 100% { top: 100%; } }
     </style>
 </head>
 <body>
-    <h1>サイト開設おめでとう！</h1>
-    <p class="message">これは学校のPCから、0円で爆誕したサイトです。</p>
-    <p>これからドメインを買ったり、中身をカッコよくしていく予定！</p>
+    <div class="scanline"></div>
+    <div class="terminal">
+        <h1 class="typing">> ACCESS GRANTED: ATER_SERVER</h1>
+        <p>
+            [SYSTEM REPORT]<br>
+            NAME: ATER Server<br>
+            STATUS: ONLINE<br>
+            DESCRIPTION: 最高のコミュニティがここにある。
+        </p>
+        <p>>> 参加を希望しますか？</p>
+        <a href="https://discord.gg/qYDzxak9" class="discord-btn" target="_blank">JOIN THE DISCORD</a>
+    </div>
 </body>
 </html>
