@@ -3,89 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TERMINAL - ATER Server</title>
+    <title>ATER SERVER - STATUS</title>
     <style>
-        /* ハッカー風デザイン設定 */
         body {
-            background-color: #000; /* 真っ黒 */
-            color: #00ff41; /* マトリックス風の緑 */
+            background-color: #000;
+            color: #00ff41;
             font-family: 'Courier New', Courier, monospace;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
-            overflow: hidden;
         }
 
         .terminal {
             width: 90%;
-            max-width: 600px;
-            background: rgba(0, 20, 0, 0.9);
-            padding: 20px;
+            max-width: 650px;
+            background: rgba(0, 20, 0, 0.95);
+            padding: 30px;
             border: 1px solid #00ff41;
-            box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
-            position: relative;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
         }
 
-        /* タイピング風アニメーション */
-        .typing {
-            overflow: hidden;
-            white-space: nowrap;
-            border-right: .15em solid #00ff41;
-            animation: typing 3.5s steps(40, end), blink-caret .75s step-end infinite;
+        h1 { border-bottom: 1px solid #00ff41; padding-bottom: 10px; }
+
+        .status-box {
+            background: rgba(0, 255, 65, 0.1);
+            padding: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #00ff41;
         }
 
-        @keyframes typing { from { width: 0 } to { width: 100% } }
-        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: #00ff41 } }
+        .ip-address {
+            background: #222;
+            padding: 5px 10px;
+            cursor: pointer;
+            border: 1px dashed #00ff41;
+        }
 
-        h1 { font-size: 1.8rem; margin-bottom: 20px; }
-        p { line-height: 1.5; margin-bottom: 20px; }
+        .ip-address:hover { background: #333; }
 
-        /* Discordボタン */
         .discord-btn {
             display: inline-block;
-            background-color: transparent;
             color: #00ff41;
             border: 1px solid #00ff41;
             padding: 10px 20px;
             text-decoration: none;
-            font-weight: bold;
-            transition: 0.3s;
-            cursor: pointer;
+            margin-top: 10px;
         }
 
-        .discord-btn:hover {
-            background-color: #00ff41;
-            color: #000;
-            box-shadow: 0 0 15px #00ff41;
-        }
-
-        .scanline {
-            width: 100%;
-            height: 2px;
-            background: rgba(0, 255, 65, 0.1);
-            position: absolute;
-            top: 0;
-            left: 0;
-            animation: scanline 4s linear infinite;
-        }
-
-        @keyframes scanline { 0% { top: 0; } 100% { top: 100%; } }
+        .discord-btn:hover { background: #00ff41; color: #000; }
+        
+        #online-count { font-weight: bold; font-size: 1.2em; }
     </style>
 </head>
 <body>
-    <div class="scanline"></div>
     <div class="terminal">
-        <h1 class="typing">> ACCESS GRANTED: ATER_SERVER</h1>
-        <p>
-            [SYSTEM REPORT]<br>
-            NAME: ATER Server<br>
-            STATUS: ONLINE<br>
-            DESCRIPTION: 最高のコミュニティがここにある。
-        </p>
-        <p>>> 参加を希望しますか？</p>
-        <a href="https://discord.gg/qYDzxak9" class="discord-btn" target="_blank">JOIN THE DISCORD</a>
+        <h1>> ATER_SERVER_PORTAL</h1>
+        
+        <p>[SERVER_INFO]</p>
+        <div class="status-box">
+            STATUS: <span id="status">CHECKING...</span><br>
+            PLAYERS: <span id="online-count">0</span> / <span id="max-count">0</span><br>
+            VERSION: 1.20.x (Java/BE)
+        </div>
+
+        <p>ADDRESS: <span class="ip-address" onclick="copyIP()">118.27.229.250</span> (Click to Copy)</p>
+
+        <p>>> 掲示板 & 雑談はこちら:</p>
+        <a href="https://discord.gg/qYDzxak9" class="discord-btn" target="_blank">DISCORD SERVER</a>
     </div>
+
+    <script>
+        // サーバー情報を取得する関数
+        async function updateStatus() {
+            try {
+                const response = await fetch('https://api.mcstatus.io/v2/status/java/118.27.229.250');
+                const data = await response.json();
+                
+                if (data.online) {
+                    document.getElementById('status').innerText = 'ONLINE';
+                    document.getElementById('status').style.color = '#00ff41';
+                    document.getElementById('online-count').innerText = data.players.online;
+                    document.getElementById('max-count').innerText = data.players.max;
+                } else {
+                    document.getElementById('status').innerText = 'OFFLINE';
+                    document.getElementById('status').style.color = '#ff0000';
+                }
+            } catch (error) {
+                document.getElementById('status').innerText = 'ERROR';
+            }
+        }
+
+        // IPをコピーする機能
+        function copyIP() {
+            navigator.clipboard.writeText('118.27.229.250');
+            alert('IPアドレスをコピーしました！');
+        }
+
+        // ページ読み込み時に実行
+        updateStatus();
+        // 60秒ごとに更新
+        setInterval(updateStatus, 60000);
+    </script>
 </body>
 </html>
