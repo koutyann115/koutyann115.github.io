@@ -4,82 +4,120 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>続きはこちら</title>
+<title>例の動画の真相、ここにあります。</title>
 <style>
   * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    min-height: 100dvh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
-    background: #050505;
-    font-family: Inter, -apple-system, "Hiragino Sans", "Noto Sans JP", sans-serif;
+  html, body { height: 100%; margin: 0; }
+  body { background: #000; font-family: Inter, -apple-system, "Hiragino Sans", "Noto Sans JP", sans-serif; }
+  .phone { position: relative; width: 100%; height: 100%; overflow: hidden; background: #000; cursor: pointer; isolation: isolate; }
+
+  .bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(110% 62% at 78% 16%, rgba(255,196,64,.34), transparent 60%),
+      radial-gradient(120% 70% at 14% 74%, rgba(254,44,85,.38), transparent 62%),
+      radial-gradient(90% 55% at 52% 44%, rgba(80,120,255,.24), transparent 72%),
+      #0b0b10;
   }
-  .card {
-    width: 420px; max-width: 100%;
-    display: flex; gap: 12px; align-items: stretch;
-    text-decoration: none; background: #101010;
-    border: 1px solid #2b2b2b; border-radius: 14px;
-    padding: 12px 12px 12px 14px;
-    transition: border-color .15s ease, transform .15s ease;
+  .vig {
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,.55) 0%, transparent 26%, transparent 44%, rgba(0,0,0,.8) 100%);
   }
-  .card:hover { border-color: #505050; transform: translateY(-1px); }
+  .qm { position: absolute; top: 46px; right: 8px; z-index: 1; font-size: 150px; font-weight: 700; line-height: 1; color: rgba(255,255,255,.07); letter-spacing: -.04em; }
 
-  .txt { flex: 1; min-width: 0; }
-  .domain { display: flex; align-items: center; gap: 5px; color: #8a8a8a; font-size: 11px; }
-  .globe { width: 12px; height: 12px; flex: none; }
+  .hit { position: absolute; inset: 0; z-index: 5; }
+  .phone:active .play { background: #fe2c55; border-color: #fe2c55; }
 
-  .head { display: flex; align-items: center; gap: 6px; margin: 5px 0 3px; }
-  .ttl { font-size: 19px; font-weight: 500; color: #fff; letter-spacing: .02em; }
-  .arrow {
-    width: 17px; height: 17px; flex: none;
-    background: #fe2c55; border-radius: 999px; padding: 3px;
-    box-sizing: border-box; transition: transform .15s ease;
+  .topbar { position: absolute; top: 0; left: 0; right: 0; z-index: 2; display: flex; align-items: center; gap: 14px; padding: 14px 16px 0; font-size: 13px; }
+  .tab { color: rgba(255,255,255,.62); font-weight: 500; }
+  .tab.on { color: #fff; position: relative; }
+  .tab.on::after { content: ""; position: absolute; left: 50%; bottom: -6px; width: 18px; height: 2px; border-radius: 2px; background: #fff; transform: translateX(-50%); }
+  .pr { margin-left: auto; font-size: 9px; color: rgba(255,255,255,.5); letter-spacing: .06em; }
+
+  .mid { position: absolute; inset: 0; z-index: 2; display: flex; align-items: center; padding: 0 18px 110px; pointer-events: none; }
+  .hook { max-width: 94%; }
+  .pill { display: inline-block; font-size: 11.5px; font-weight: 500; color: #0b0b0b; background: #fff; border-radius: 999px; padding: 3px 10px; margin-bottom: 12px; }
+  h1 { margin: 0 0 9px; font-size: 27px; line-height: 1.34; font-weight: 700; color: #fff; letter-spacing: -.015em; text-shadow: 0 2px 16px rgba(0,0,0,.5); }
+  .sub { margin: 0 0 15px; font-size: 12.5px; color: rgba(255,255,255,.86); text-shadow: 0 1px 8px rgba(0,0,0,.5); }
+
+  .play {
+    display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: #fff;
+    border: 1px solid rgba(255,255,255,.55); border-radius: 999px; padding: 7px 13px 7px 9px;
+    background: rgba(0,0,0,.25); transition: background .15s ease, border-color .15s ease;
   }
-  .card:hover .arrow { transform: translateX(2px); }
+  .play svg { width: 15px; height: 15px; }
 
-  .desc { margin: 0; font-size: 12.5px; line-height: 1.5; color: #a8a8a8; }
+  .rail { position: absolute; right: 10px; bottom: 122px; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 16px; pointer-events: none; }
+  .ico { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .ico svg { width: 26px; height: 26px; filter: drop-shadow(0 1px 4px rgba(0,0,0,.5)); }
+  .ico span { font-size: 10.5px; color: #fff; font-weight: 500; text-shadow: 0 1px 4px rgba(0,0,0,.5); }
 
-  .thumb {
-    flex: none; width: 86px; border-radius: 10px; background: #000;
-    display: flex; align-items: center; justify-content: center;
-    position: relative; overflow: hidden;
+  .disc {
+    width: 40px; height: 40px; border-radius: 999px; background: #141414;
+    border: 1px solid rgba(255,255,255,.22); display: flex; align-items: center; justify-content: center;
+    animation: spin 4s linear infinite;
   }
-  .thumb::before, .thumb::after { content: ""; position: absolute; width: 96px; height: 6px; border-radius: 3px; opacity: .85; }
-  .thumb::before { background: #25f4ee; top: 16px; left: -20px; transform: rotate(-9deg); }
-  .thumb::after { background: #fe2c55; bottom: 16px; right: -22px; transform: rotate(-9deg); }
+  .disc svg { width: 19px; height: 19px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
-  .logo { position: relative; width: 42px; height: 42px; }
-  .logo::before, .logo::after { content: ""; position: absolute; inset: 0; border-radius: 10px; }
-  .logo::before { background: #25f4ee; transform: translate(-2.5px, -2px); }
-  .logo::after { background: #fe2c55; transform: translate(2.5px, 2px); }
-  .logo svg { position: relative; width: 42px; height: 42px; background: #101010; border-radius: 10px; padding: 3px; box-sizing: border-box; }
+  .bottom { position: absolute; left: 0; right: 58px; bottom: 20px; z-index: 2; padding-left: 16px; pointer-events: none; }
+  .user { font-size: 13.5px; font-weight: 600; color: #fff; margin-bottom: 5px; }
+  .cap { margin: 0 0 8px; font-size: 12.5px; line-height: 1.55; color: rgba(255,255,255,.94); }
+  .mark { border-bottom: 2px solid rgba(255,196,64,.9); }
+  .music { display: flex; align-items: center; gap: 6px; overflow: hidden; }
+  .music svg { width: 13px; height: 13px; flex: none; }
+  .ticker { font-size: 11.5px; color: rgba(255,255,255,.9); white-space: nowrap; animation: marquee 9s linear infinite; }
+  @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-60%); } }
+
+  .progress { position: absolute; left: 0; right: 0; bottom: 0; height: 2.5px; background: rgba(255,255,255,.24); z-index: 2; }
+  .progress span { display: block; height: 100%; width: 34%; background: #fff; }
 </style>
 </head>
 <body>
 
-<a class="card" href="https://lite.tiktok.com/t/ZS9yndvqbXuML-iDItJ/" target="_blank" rel="noopener noreferrer">
-  <div class="txt">
-    <div class="domain">
-      <svg class="globe" viewBox="0 0 16 16" aria-hidden="true">
-        <circle cx="8" cy="8" r="6.2" fill="none" stroke="#8a8a8a" stroke-width="1.2"/>
-        <ellipse cx="8" cy="8" rx="2.6" ry="6.2" fill="none" stroke="#8a8a8a" stroke-width="1.2"/>
-        <path d="M1.8 8h12.4" stroke="#8a8a8a" stroke-width="1.2"/>
-      </svg>
-      <span>lite.tiktok.com</span>
-    </div>
-    <div class="head">
-      <span class="ttl">続きはこちら</span>
-      <svg class="arrow" viewBox="0 0 20 20" aria-hidden="true">
-        <path d="M4 10h11M10.5 5l5 5-5 5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </div>
-    <p class="desc">例の動画の真相、まとめました。</p>
+<div class="phone">
+  <div class="bg"></div>
+  <div class="vig"></div>
+  <div class="qm">?</div>
+
+  <a class="hit" href="https://lite.tiktok.com/t/ZS9yndvqbXuML-iDItJ/" target="_blank" rel="noopener noreferrer" aria-label="続きを開く"></a>
+
+  <div class="topbar">
+    <span class="tab on">フォロー中</span>
+    <span class="tab">おすすめ</span>
+    <span class="pr">PR</span>
   </div>
-  <div class="thumb">
-    <div class="logo">
+
+  <div class="mid">
+    <div class="hook">
+      <span class="pill">続きはこちら</span>
+      <h1>例の動画の<br>真相、ここに<br>あります。</h1>
+      <p class="sub">TLで回ってるアレ。1分で分かります。</p>
+      <span class="play">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="#fff"/></svg>
+        タップして見る
+      </span>
+    </div>
+  </div>
+
+  <div class="rail">
+    <div class="ico">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.3l-1.3-1.2C6 14.9 3 12.2 3 8.9A4.9 4.9 0 0 1 12 6.4 4.9 4.9 0 0 1 21 8.9c0 3.3-3 6-7.7 10.2z" fill="#fff"/></svg>
+      <span>8.7万</span>
+    </div>
+    <div class="ico">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3C6.9 3 3 6.5 3 10.8c0 2.4 1.3 4.5 3.4 5.9L5.6 21l4.3-2.2c.7.1 1.4.2 2.1.2 5.1 0 9-3.5 9-7.8S17.1 3 12 3z" fill="#fff"/></svg>
+      <span>2104</span>
+    </div>
+    <div class="ico">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4.5L5 21V4a1 1 0 0 1 1-1z" fill="#fff"/></svg>
+      <span>9630</span>
+    </div>
+    <div class="ico">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4l7 7-7 7v-4.2c-5.4 0-8.4 1.6-10 5 .3-6.7 3.9-10.3 10-10.8z" fill="#fff"/></svg>
+      <span>シェア</span>
+    </div>
+    <div class="disc">
       <svg viewBox="0 0 48 48" aria-hidden="true">
         <rect x="27" y="7" width="5" height="27" rx="2.5" fill="#fff"/>
         <circle cx="23" cy="33" r="8" fill="#fff"/>
@@ -87,7 +125,22 @@
       </svg>
     </div>
   </div>
-</a>
+
+  <div class="bottom">
+    <div class="user">@nandemo_chousa</div>
+    <p class="cap">例の動画、結論から言うと<span class="mark">普通にヤバい</span>です。詳細はリプ欄のリンクから。</p>
+    <div class="music">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="13" y="3" width="2.6" height="13" rx="1.3" fill="#fff"/>
+        <circle cx="10.4" cy="16.6" r="4" fill="#fff"/>
+        <rect x="15" y="2.4" width="6" height="2.6" rx="1.3" fill="#fff"/>
+      </svg>
+      <span class="ticker">オリジナル楽曲 - 例の件について</span>
+    </div>
+  </div>
+
+  <div class="progress"><span></span></div>
+</div>
 
 </body>
 </html>
