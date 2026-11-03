@@ -1,379 +1,93 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0c0f17">
-  <title>リンクカードをつくる</title>
-  <style>
-    :root {
-      color-scheme: dark;
-      --page: #0c0f17;
-      --surface: #141923;
-      --surface-hover: #1a202c;
-      --input: #0e131c;
-      --line: rgba(255,255,255,.09);
-      --line-strong: rgba(255,255,255,.16);
-      --text: #f3f5f8;
-      --sub: #a0a8b6;
-      --muted: #737d8c;
-      --accent: #c9f46c;
-      --accent-ink: #17200c;
-      --radius: 14px;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, system-ui, sans-serif;
-      font-synthesis: none;
-      text-rendering: optimizeLegibility;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-    *, *::before, *::after { box-sizing: border-box; }
-    html { min-width: 320px; background: var(--page); }
-    body {
-      min-height: 100vh;
-      margin: 0;
-      background: var(--page);
-      color: var(--text);
-      line-height: 1.55;
-    }
-    button, input { font: inherit; }
-    a:focus-visible, button:focus-visible, input:focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 3px;
-    }
-    .site-container {
-      width: min(100%, 580px);
-      margin-inline: auto;
-      padding: 48px 20px 52px;
-      animation: appear .35s ease-out both;
-    }
-    @keyframes appear { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-    .profile-header { display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 34px; }
-    .avatar {
-      display: grid;
-      width: 96px;
-      height: 96px;
-      place-items: center;
-      margin-bottom: 17px;
-      overflow: hidden;
-      border: 2px solid #1d2430;
-      border-radius: 50%;
-      outline: 1px solid rgba(255,255,255,.12);
-      background: #141b23;
-      box-shadow: 0 5px 20px rgba(0,0,0,.32);
-    }
-    .avatar svg { display: block; width: 100%; height: 100%; }
-    h1 { margin: 0 0 7px; font-size: 1.45rem; line-height: 1.25; letter-spacing: -.02em; }
-    .intro { max-width: 440px; margin: 0; color: var(--sub); font-size: .94rem; }
-    .links-container { display: flex; flex-direction: column; gap: 28px; }
-    .link-card { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-    .link-image-anchor {
-      display: block;
-      overflow: hidden;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      background: var(--surface);
-      box-shadow: 0 2px 8px rgba(0,0,0,.24);
-      text-decoration: none;
-      transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
-    }
-    .link-image-anchor:hover { transform: translateY(-2px); border-color: var(--line-strong); box-shadow: 0 8px 24px rgba(0,0,0,.35); }
-    .link-image-wrapper { position: relative; display: flex; width: 100%; aspect-ratio: 16 / 9; align-items: end; overflow: hidden; background: #172027; }
-    .poster-art, .preview-image, .image-shade { position: absolute; inset: 0; width: 100%; height: 100%; }
-    .poster-art {
-      overflow: hidden;
-      background:
-        radial-gradient(ellipse at 76% 27%, rgba(201,244,108,.28), transparent 26%),
-        radial-gradient(ellipse at 22% 100%, rgba(97,176,147,.24), transparent 37%),
-        linear-gradient(125deg, #172029 4%, #202b2e 53%, #17231e 100%);
-    }
-    .poster-art::before, .poster-art::after { position: absolute; content: ""; border: 1px solid rgba(229,255,195,.15); border-radius: 50%; }
-    .poster-art::before { width: 52%; aspect-ratio: 1; top: -40%; right: -4%; box-shadow: 0 0 0 20px rgba(201,244,108,.025), 0 0 0 42px rgba(201,244,108,.02); }
-    .poster-art::after { width: 34%; aspect-ratio: 1; bottom: -29%; left: 5%; background: rgba(201,244,108,.04); }
-    .preview-image { z-index: 1; display: none; object-fit: cover; }
-    .image-shade { z-index: 2; background: linear-gradient(90deg, rgba(7,11,14,.78), rgba(7,11,14,.24) 68%, rgba(7,11,14,.04)); }
-    .poster-copy { position: relative; z-index: 3; max-width: 82%; padding: 27px 30px 28px; text-align: left; text-shadow: 0 2px 18px rgba(0,0,0,.5); }
-    .poster-eyebrow { display: flex; align-items: center; gap: 8px; margin-bottom: 9px; color: rgba(236,246,220,.77); font-size: .67rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
-    .poster-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 12px rgba(201,244,108,.72); }
-    .poster-title { display: block; overflow: hidden; color: #f6f8f2; font-size: clamp(1.15rem, 5vw, 2rem); font-weight: 700; letter-spacing: -.035em; text-overflow: ellipsis; white-space: nowrap; }
-    .poster-host { display: block; overflow: hidden; margin-top: 4px; color: rgba(238,243,235,.72); font-size: .84rem; text-overflow: ellipsis; white-space: nowrap; }
-    .link-button {
-      display: flex;
-      min-height: 54px;
-      align-items: center;
-      justify-content: space-between;
-      padding: 11px 17px 11px 18px;
-      border: 1px solid rgba(255,255,255,.06);
-      border-radius: 10px;
-      background: #1b202a;
-      color: var(--text);
-      box-shadow: 0 2px 8px rgba(0,0,0,.22);
-      text-decoration: none;
-      transition: background .15s ease, border-color .15s ease, transform .15s ease;
-    }
-    .link-button:hover { transform: translateY(-1px); border-color: var(--line-strong); background: #242b37; }
-    .link-button:active { transform: translateY(1px); }
-    .link-button-title { min-width: 0; overflow: hidden; font-size: .98rem; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
-    .arrow { width: 18px; height: 18px; flex: 0 0 auto; margin-left: 14px; color: var(--sub); transition: transform .15s ease; }
-    .link-button:hover .arrow { transform: translate(2px,-2px); color: var(--text); }
-    .editor {
-      padding: 22px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: #111620;
-      box-shadow: 0 2px 10px rgba(0,0,0,.15);
-    }
-    .editor-heading { margin: 0 0 5px; font-size: 1.04rem; font-weight: 650; letter-spacing: -.01em; }
-    .editor-note { margin: 0 0 18px; color: var(--sub); font-size: .84rem; }
-    .field { display: block; margin-top: 14px; }
-    .field-label { display: block; margin-bottom: 7px; color: #dce1e8; font-size: .82rem; font-weight: 600; }
-    .optional { margin-left: 5px; color: var(--muted); font-size: .76rem; font-weight: 400; }
-    .field input {
-      display: block;
-      width: 100%;
-      min-height: 46px;
-      padding: 10px 12px;
-      border: 1px solid rgba(255,255,255,.1);
-      border-radius: 8px;
-      background: var(--input);
-      color: var(--text);
-      font-size: .91rem;
-      transition: border-color .15s ease, box-shadow .15s ease;
-    }
-    .field input::placeholder { color: #687383; }
-    .field input:focus { border-color: rgba(201,244,108,.7); outline: none; box-shadow: 0 0 0 3px rgba(201,244,108,.1); }
-    .field-help { margin: 6px 0 0; color: var(--muted); font-size: .76rem; }
-    .actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 19px; }
-    .action-button {
-      min-height: 43px;
-      padding: 9px 14px;
-      border: 1px solid var(--line-strong);
-      border-radius: 8px;
-      background: #1b202a;
-      color: var(--text);
-      cursor: pointer;
-      font-size: .86rem;
-      font-weight: 650;
-      transition: transform .15s ease, background .15s ease, border-color .15s ease;
-    }
-    .action-button:hover { transform: translateY(-1px); background: #242b37; }
-    .action-button.primary { border-color: transparent; background: var(--accent); color: var(--accent-ink); }
-    .action-button.primary:hover { background: #d7f98e; }
-    .action-button:active { transform: translateY(1px); }
-    .status { min-height: 1.4em; margin: 11px 0 0; color: var(--sub); font-size: .8rem; }
-    .status.error { color: #ffaaa4; }
-    .site-footer { display: flex; flex-direction: column; align-items: center; gap: 7px; margin-top: 31px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); text-align: center; }
-    .footer-copy { margin: 0; font-size: .78rem; }
-    .footer-hint { margin: 0; font-size: .75rem; }
-    @media (max-width: 420px) {
-      .site-container { padding: 36px 17px 42px; }
-      .editor { padding: 18px 16px; }
-      .poster-copy { max-width: 92%; padding: 18px 19px 20px; }
-      .poster-eyebrow { margin-bottom: 5px; font-size: .59rem; }
-      .poster-host { margin-top: 2px; font-size: .73rem; }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>続きはこちら</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: #050505;
+    font-family: Inter, -apple-system, "Hiragino Sans", "Noto Sans JP", sans-serif;
+  }
+  .card {
+    width: 420px; max-width: 100%;
+    display: flex; gap: 12px; align-items: stretch;
+    text-decoration: none; background: #101010;
+    border: 1px solid #2b2b2b; border-radius: 14px;
+    padding: 12px 12px 12px 14px;
+    transition: border-color .15s ease, transform .15s ease;
+  }
+  .card:hover { border-color: #505050; transform: translateY(-1px); }
+
+  .txt { flex: 1; min-width: 0; }
+  .domain { display: flex; align-items: center; gap: 5px; color: #8a8a8a; font-size: 11px; }
+  .globe { width: 12px; height: 12px; flex: none; }
+
+  .head { display: flex; align-items: center; gap: 6px; margin: 5px 0 3px; }
+  .ttl { font-size: 19px; font-weight: 500; color: #fff; letter-spacing: .02em; }
+  .arrow {
+    width: 17px; height: 17px; flex: none;
+    background: #fe2c55; border-radius: 999px; padding: 3px;
+    box-sizing: border-box; transition: transform .15s ease;
+  }
+  .card:hover .arrow { transform: translateX(2px); }
+
+  .desc { margin: 0; font-size: 12.5px; line-height: 1.5; color: #a8a8a8; }
+
+  .thumb {
+    flex: none; width: 86px; border-radius: 10px; background: #000;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .thumb::before, .thumb::after { content: ""; position: absolute; width: 96px; height: 6px; border-radius: 3px; opacity: .85; }
+  .thumb::before { background: #25f4ee; top: 16px; left: -20px; transform: rotate(-9deg); }
+  .thumb::after { background: #fe2c55; bottom: 16px; right: -22px; transform: rotate(-9deg); }
+
+  .logo { position: relative; width: 42px; height: 42px; }
+  .logo::before, .logo::after { content: ""; position: absolute; inset: 0; border-radius: 10px; }
+  .logo::before { background: #25f4ee; transform: translate(-2.5px, -2px); }
+  .logo::after { background: #fe2c55; transform: translate(2.5px, 2px); }
+  .logo svg { position: relative; width: 42px; height: 42px; background: #101010; border-radius: 10px; padding: 3px; box-sizing: border-box; }
+</style>
 </head>
 <body>
-  <div class="site-container">
-    <header class="profile-header">
-      <div class="avatar" aria-hidden="true">
-        <svg viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="48" cy="48" r="48" fill="#141D22"/>
-          <ellipse cx="48" cy="75" rx="24" ry="5" fill="#07100D" opacity=".42"/>
-          <path d="M19 67c2-18 9-31 17-41 6-8 13-13 17-10 3 2 2 8 0 14 7-6 14-9 18-6 4 4-1 12-7 19 9-3 16-2 18 3 2 6-7 13-18 18-12 6-29 11-40 9-5-.8-7-2.5-5-6Z" fill="#B9EA68"/>
-          <path d="M25 65c3-16 10-28 17-36 5-6 8-9 10-8 2 1-1 8-5 14 8-7 17-12 20-9 2 3-6 12-13 18 11-5 21-5 22-1 1 4-11 11-22 16-13 5-24 8-29 6Z" fill="#D6F88E"/>
-          <ellipse cx="43" cy="55" rx="2.2" ry="3.6" fill="#172218"/>
-          <ellipse cx="61" cy="50" rx="2.2" ry="3.6" fill="#172218"/>
-          <path d="M47 63c3 3 7 3 10 0" stroke="#172218" stroke-width="2.2" stroke-linecap="round"/>
-          <circle cx="35" cy="58" r="3" fill="#F59B92" opacity=".72"/>
-          <circle cx="68" cy="55" r="3" fill="#F59B92" opacity=".72"/>
-        </svg>
-      </div>
-      <h1>お気に入りリンク</h1>
-      <p class="intro">好きなURLを入れて、自分だけのリンクカードに。</p>
-    </header>
 
-    <main class="links-container">
-      <article class="link-card">
-        <a id="imageLink" class="link-image-anchor" href="https://example.com/" target="_blank" rel="noopener noreferrer" aria-label="リンク先を開く" data-goatcounter-click="favorite-link">
-          <div class="link-image-wrapper">
-            <div class="poster-art" aria-hidden="true"></div>
-            <img id="previewImage" class="preview-image" alt="" aria-hidden="true">
-            <div class="image-shade" aria-hidden="true"></div>
-            <div class="poster-copy">
-              <span class="poster-eyebrow"><span class="poster-dot"></span>YOUR FAVORITE LINK</span>
-              <strong id="posterTitle" class="poster-title">お気に入りのリンク</strong>
-              <span id="posterHost" class="poster-host">example.com</span>
-            </div>
-          </div>
-        </a>
-        <a id="buttonLink" class="link-button" href="https://example.com/" target="_blank" rel="noopener noreferrer" data-goatcounter-click="favorite-link">
-          <span id="buttonTitle" class="link-button-title">お気に入りのリンク</span>
-          <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"/>
-          </svg>
-        </a>
-      </article>
-
-      <section class="editor" aria-labelledby="editorHeading">
-        <h2 id="editorHeading" class="editor-heading">カードをカスタマイズ</h2>
-        <p class="editor-note">URLを入れて「カードに反映」を押してください。設定はこのブラウザーに保存されます。</p>
-        <form id="cardForm" novalidate>
-          <label class="field">
-            <span class="field-label">リンク先URL</span>
-            <input id="urlInput" name="url" type="text" inputmode="url" autocomplete="url" placeholder="https://example.com" required spellcheck="false">
-          </label>
-          <label class="field">
-            <span class="field-label">カードのタイトル <span class="optional">任意</span></span>
-            <input id="titleInput" name="title" type="text" maxlength="80" placeholder="お気に入りのリンク">
-          </label>
-          <label class="field">
-            <span class="field-label">カードの画像URL <span class="optional">任意</span></span>
-            <input id="imageInput" name="image" type="text" inputmode="url" placeholder="https://example.com/image.jpg" spellcheck="false">
-            <p class="field-help">画像を指定しない場合は、リンク先のドメインを使ったデザインになります。</p>
-          </label>
-          <div class="actions">
-            <button class="action-button primary" type="submit">カードに反映</button>
-            <button class="action-button" id="copyButton" type="button" hidden>設定URLをコピー</button>
-            <button class="action-button" id="resetButton" type="button">初期状態に戻す</button>
-          </div>
-          <p id="status" class="status" role="status" aria-live="polite"></p>
-        </form>
-      </section>
-    </main>
-
-    <footer class="site-footer">
-      <p class="footer-copy">リンク先は新しいタブで開きます。</p>
-      <p class="footer-hint">リンクを公開すると、設定URLからカードを共有できます。</p>
-    </footer>
+<a class="card" href="https://lite.tiktok.com/t/ZS9yndvqbXuML-iDItJ/" target="_blank" rel="noopener noreferrer">
+  <div class="txt">
+    <div class="domain">
+      <svg class="globe" viewBox="0 0 16 16" aria-hidden="true">
+        <circle cx="8" cy="8" r="6.2" fill="none" stroke="#8a8a8a" stroke-width="1.2"/>
+        <ellipse cx="8" cy="8" rx="2.6" ry="6.2" fill="none" stroke="#8a8a8a" stroke-width="1.2"/>
+        <path d="M1.8 8h12.4" stroke="#8a8a8a" stroke-width="1.2"/>
+      </svg>
+      <span>lite.tiktok.com</span>
+    </div>
+    <div class="head">
+      <span class="ttl">続きはこちら</span>
+      <svg class="arrow" viewBox="0 0 20 20" aria-hidden="true">
+        <path d="M4 10h11M10.5 5l5 5-5 5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <p class="desc">例の動画の真相、まとめました。</p>
   </div>
+  <div class="thumb">
+    <div class="logo">
+      <svg viewBox="0 0 48 48" aria-hidden="true">
+        <rect x="27" y="7" width="5" height="27" rx="2.5" fill="#fff"/>
+        <circle cx="23" cy="33" r="8" fill="#fff"/>
+        <rect x="30" y="6" width="11" height="5" rx="2.5" fill="#fff"/>
+      </svg>
+    </div>
+  </div>
+</a>
 
-  <script>
-    (() => {
-      const STORAGE_KEY = "favorite-link-card-settings-v1";
-      const GOATCOUNTER_CODE = "YOUR_SITE_CODE";
-      const form = document.querySelector("#cardForm");
-      const urlInput = document.querySelector("#urlInput");
-      const titleInput = document.querySelector("#titleInput");
-      const imageInput = document.querySelector("#imageInput");
-      const imageLink = document.querySelector("#imageLink");
-      const buttonLink = document.querySelector("#buttonLink");
-      const previewImage = document.querySelector("#previewImage");
-      const posterTitle = document.querySelector("#posterTitle");
-      const posterHost = document.querySelector("#posterHost");
-      const buttonTitle = document.querySelector("#buttonTitle");
-      const status = document.querySelector("#status");
-      const copyButton = document.querySelector("#copyButton");
-      const resetButton = document.querySelector("#resetButton");
-      const defaults = { url: "https://example.com/", title: "お気に入りのリンク", image: "" };
-
-      function parseHttpUrl(value, allowEmpty = false) {
-        const text = value.trim();
-        if (!text && allowEmpty) return "";
-        if (!text) throw new Error("リンク先URLを入力してください。");
-        const candidate = /^[a-z][a-z\d+.-]*:/i.test(text) ? text : `https://${text}`;
-        let parsed;
-        try { parsed = new URL(candidate); } catch { throw new Error("URLの形式を確認してください。"); }
-        if (!["http:", "https:"].includes(parsed.protocol) || !parsed.hostname || parsed.username || parsed.password) {
-          throw new Error("http または https から始まるURLを入力してください。");
-        }
-        return parsed.href;
-      }
-
-      function setStatus(message, isError = false) {
-        status.textContent = message;
-        status.classList.toggle("error", isError);
-      }
-
-      function render(settings, announce = false) {
-        const target = parseHttpUrl(settings.url);
-        const parsed = new URL(target);
-        const title = (settings.title || "").trim() || parsed.hostname;
-        const image = parseHttpUrl(settings.image || "", true);
-        urlInput.value = target;
-        titleInput.value = settings.title || "";
-        imageInput.value = image;
-        imageLink.href = target;
-        buttonLink.href = target;
-        imageLink.setAttribute("aria-label", `${title}を開く`);
-        posterTitle.textContent = title;
-        posterHost.textContent = parsed.hostname;
-        buttonTitle.textContent = title;
-        if (image) {
-          previewImage.src = image;
-          previewImage.style.display = "block";
-          previewImage.onerror = () => { previewImage.style.display = "none"; };
-          previewImage.onload = () => { previewImage.style.display = "block"; };
-        } else {
-          previewImage.removeAttribute("src");
-          previewImage.style.display = "none";
-        }
-        const saved = { url: target, title: settings.title || "", image };
-        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(saved)); } catch { /* Private browsing can disable local storage. */ }
-        copyButton.hidden = !(location.protocol === "https:" || location.protocol === "http:");
-        if (announce) setStatus("カードを更新しました。入力内容はこのブラウザーに保存されました。");
-        return saved;
-      }
-
-      function readSettings() {
-        const params = new URLSearchParams(location.search);
-        if (params.has("url")) {
-          return { url: params.get("url"), title: params.get("title") || "", image: params.get("image") || "" };
-        }
-        try {
-          const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
-          if (saved && typeof saved.url === "string") return { ...defaults, ...saved };
-        } catch { /* Ignore invalid or unavailable saved data. */ }
-        return defaults;
-      }
-
-      form.addEventListener("submit", event => {
-        event.preventDefault();
-        try {
-          render({ url: urlInput.value, title: titleInput.value, image: imageInput.value }, true);
-        } catch (error) {
-          setStatus(error.message || "入力内容を確認してください。", true);
-        }
-      });
-
-      copyButton.addEventListener("click", async () => {
-        try {
-          const saved = { url: parseHttpUrl(urlInput.value), title: titleInput.value.trim(), image: parseHttpUrl(imageInput.value, true) };
-          const share = new URL(location.pathname, location.origin);
-          share.searchParams.set("url", saved.url);
-          if (saved.title) share.searchParams.set("title", saved.title);
-          if (saved.image) share.searchParams.set("image", saved.image);
-          await navigator.clipboard.writeText(share.href);
-          setStatus("設定URLをコピーしました。");
-        } catch (error) {
-          setStatus(error.message || "コピーできませんでした。", true);
-        }
-      });
-
-      resetButton.addEventListener("click", () => {
-        try { localStorage.removeItem(STORAGE_KEY); } catch { /* Ignore unavailable storage. */ }
-        urlInput.value = defaults.url;
-        titleInput.value = defaults.title;
-        imageInput.value = "";
-        try { render(defaults); setStatus("初期状態に戻しました。"); }
-        catch (error) { setStatus(error.message, true); }
-      });
-
-      try { render(readSettings()); }
-      catch { render(defaults); }
-
-      if (GOATCOUNTER_CODE !== "YOUR_SITE_CODE" && /^[a-z0-9-]+$/i.test(GOATCOUNTER_CODE)) {
-        const counterScript = document.createElement("script");
-        counterScript.async = true;
-        counterScript.src = "https://gc.zgo.at/count.js";
-        counterScript.dataset.goatcounter = `https://${GOATCOUNTER_CODE}.goatcounter.com/count`;
-        document.head.appendChild(counterScript);
-      }
-    })();
-  </script>
 </body>
 </html>
-
